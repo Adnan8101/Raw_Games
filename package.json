@@ -1,0 +1,28 @@
+{
+    "name": "raw-games",
+    "version": "1.0.0",
+    "description": "Discord Games Bot",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc",
+        "dev": "nodemon src/index.ts",
+        "start": "node dist/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "dependencies": {
+        "canvas": "^3.2.0",
+        "discord.js": "^14.25.1",
+        "dotenv": "^17.2.3",
+        "mongoose": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^24.10.1",
+        "nodemon": "^3.1.11",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    }
+}
