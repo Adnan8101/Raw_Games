@@ -34,10 +34,14 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
 
         await ConfigManager.setNicknameResetChannel(interaction.guild.id, channel.id);
 
-        // Immediate Effect: Reset everyone currently in it
         let resetCount = 0;
-        channel.members.forEach(async (member) => {
-            if (member.nickname) {
+
+        // Use guild.voiceStates for reliability
+        const voiceStates = interaction.guild.voiceStates.cache.filter(vs => vs.channelId === channel.id);
+
+        for (const [_, vs] of voiceStates) {
+            const member = vs.member;
+            if (member && member.nickname) {
                 try {
                     await member.setNickname(null);
                     resetCount++;
@@ -45,7 +49,7 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
                     console.error(`Failed to reset ${member.user.tag}`, e);
                 }
             }
-        });
+        }
 
         await interaction.reply({
             content: `✅ **Enabled Auto-Nickname Reset** for <#${channel.id}>.\n🔄 Triggered immediate reset for ${resetCount} users.`,
