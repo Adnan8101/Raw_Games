@@ -36,4 +36,21 @@ export class ConfigManager {
             throw error;
         }
     }
+
+    static async setNicknameResetChannel(guildId: string, channelId: string) {
+        await GuildConfig.findOneAndUpdate(
+            { guildId },
+            { nicknameResetChannelId: channelId },
+            { upsert: true, new: true }
+        );
+    }
+
+    static async getNicknameResetChannel(guildId: string): Promise<string | null> {
+        const config = await GuildConfig.findOne({ guildId });
+        return config?.nicknameResetChannelId || null;
+    }
+
+    static async removeNicknameResetChannel(guildId: string) {
+        await GuildConfig.updateOne({ guildId }, { $unset: { nicknameResetChannelId: "" } });
+    }
 }

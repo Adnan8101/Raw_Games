@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { ConfigManager } from './utils/ConfigManager';
 import { connectDatabase } from './utils/database';
 
 config();
@@ -14,7 +15,31 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
     ],
+});
+
+client.on('voiceStateUpdate', async (oldState, newState) => {
+    // Check if user JOINED or MOVED to a channel
+    if (newState.channelId && newState.member && newState.guild) {
+        try {
+            const monitoredChannelId = await ConfigManager.getNicknameResetChannel(newState.guild.id);
+
+            if (monitoredChannelId && newState.channelId === monitoredChannelId) {
+                const member = newState.member;
+                if (member.nickname) {
+                    try {
+                        await member.setNickname(null);
+                        console.log(`🔄 Reset nickname for ${member.user.tag} in configured reset channel.`);
+                    } catch (error) {
+                        console.error(`Failed to reset nickname for ${member.user.tag}:`, error);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Error in voiceStateUpdate nickname reset:', e);
+        }
+    }
 });
 
 // Create a collection to store commands
