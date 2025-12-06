@@ -18,14 +18,14 @@ export class EmojiEquationGameManager {
 
 
     private emojiPool = [
-        '🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🥑', '🍆', '🥕', '🌽', '🥦', '🍄', '🥜', '🌰', '🍞', '🥐', '🥖', '🥨', '🥞', '🧀', '🍖', '🍗', '🥩', '🥓', '🍔', '🍟', '🍕', '🌭', '🥪', '🌮', '🌯',
-        '🍋', '🍊', '🍐', '🍑', '🥭', '🥥', '🥔', '🧄', '🧅', '🥗', '🍿', '🥫', '🍱', '🍘', '🍙', '🍚', '🍛', '🍜', '🍝', '🍠', '🍢', '🍣', '🍤', '🍥', '🥮', '🍡', '🥟', '🥠', '🥡',
-        '🍪', '🍩', '🍫', '🍬', '🍭', '🍮', '🍯', '🍼', '🥛', '☕', '🍵', '🍶', '🍾', '🍷', '🍸', '🍹', '🍺', '🍻', '🥂', '🥃', '🥤', '🧃', '🧉', '🧊',
-        '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜',
-        '🦟', '🦗', '🕷', '🕸', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🦣', '🐘', '🦛', '🦏', '🐪', '🐫',
-        '⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸', '🥅', '🏒', '🏑', '🏏', '⛳', '🏹', '🎣', '🥊', '🥋', '🎽', '🛹', '🛷', '⛸', '🥌', '🎿', '⛷', '🏂', '🏋️', '🤼', '🤸', '⛹️', '🤺', '🤾', '🏌️', '🏇', '🧘',
-        '🚗', '🚕', '🚙', '🚌', '🚎', '🏎', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🏍', '🛵', '🦽', '🦼', '🛺', '🚲', '🛴', '🛹', '🛼', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚊', '🚋', '🚌', '🚍', '🚎', '🚐', '🚑', '🚒', '🚓', '🚔', '🚕', '🚖', '🚗', '🚘', '🚙', '🛻', '🚚', '🚛', '🚜', '🏎', '🏍', '🛵', '🦽', '🦼', '🛺', '🚲', '🛴', '🛹', '🛼', '🚏', '🛣', '🛤', '🛢', '⛽', '🚨', '🚥', '🚦', '🛑', '🚧',
-        '⚓', '⛵', '🛶', '🚤', '🛳', '⛴', '🛥', '🚢', '✈', '🛩', '🛫', '🛬', '🪂', '💺', '🚁', '🚟', '🚠', '🚡', '🛰', '🚀', '🛸', '🛎', '🧳', '⌛', '⏳', '⌚', '⏰', '⏱', '⏲', '🕰', '🕛', '🕧', '🕐', '🕜', '🕑', '🕝', '🕒', '🕞', '🕓', '🕟', '🕔', '🕠', '🕕', '🕡', '🕖', '🕢', '🕗', '🕣', '🕘', '🕤', '🕙', '🕥', '🕚', '🕦'
+        // Fruits
+        '🍎', '🍌', '🍇', '🍉', '🍒', '🍓', '🍍', '🥝', '🥑', '🍆', '🥕', '🌽', '🥦', '🍄', '🥜',
+        // Animals
+        '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋',
+        // Sports
+        '⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸', '🥅', '🏒', '🏑', '🏏', '⛳', '🏹', '🎣', '🥊', '🥋',
+        // Vehicles (Distinct)
+        '🚗', '🚕', '🚙', '🚌', '🚓', '🚑', '🚒', '🚜', '🚲', '🛴', '🛵', '🏍'
     ];
 
     constructor(client: Client) {
@@ -126,13 +126,7 @@ export class EmojiEquationGameManager {
 
         // Difficulty Settings
         if (difficulty === 'medium') {
-            numEmojis = 3; // Keep to 3 variables for solvable flow (A, B, C) usually sufficient
-            numEquations = 3; // Eq1(A), Eq2(A,B), Eq3(Final) or Eq1(A), Eq2(B), Eq3(C), Eq4(Final)?
-            // Let's stick to standard 3-variable puzzle:
-            // 1. A + A = X
-            // 2. A + B = Y
-            // 3. A + B - C = Z
-            // 4. A + B + C ?
+            numEmojis = 3;
             numEquations = 4;
             allowedOps = ['+', '-'];
             answerMin = 30;
@@ -157,8 +151,6 @@ export class EmojiEquationGameManager {
             const selectedEmojis = shuffledEmojis.slice(0, numEmojis);
 
             // 2. Assign Values
-            // For Hard mode, we need higher numbers to reach 140 with small term counts if we don't multiply.
-            // But we have multiplication in Hard.
             const values: Record<string, number> = {};
             const maxVal = difficulty === 'hard' ? 30 : (difficulty === 'medium' ? 20 : 10);
             selectedEmojis.forEach(e => values[e] = Math.floor(Math.random() * maxVal) + 1);
@@ -166,22 +158,21 @@ export class EmojiEquationGameManager {
             const equations: string[] = [];
 
             // Helper to build equation string and value
-            // We want to generate equations that INTRODUCE variable i at step i.
-
-            // e.g. E0 + E0 + E0 = X
             let validSystem = true;
 
             for (let i = 0; i < numEmojis; i++) {
                 // Determine which emojis are "known" or "available" for this line.
                 // Progressive Cascade STRICT Solvability:
-                // Line 0: Uses ONLY Emoji 0. Force (+) to prevent A-A=0.
-                // Line i > 0: Uses ONE instance of Emoji i, and multiple instances of E_0..E_{i-1}.
 
                 const terms: string[] = [];
                 const ops: string[] = [];
                 let currentVal = 0;
 
-                const termCount = Math.floor(Math.random() * 2) + 2;
+                // Adjust term count by difficulty for clarity/complexity
+                let termCount = 2;
+                if (difficulty === 'easy') termCount = 2; // Strict 2 for Easy (A+B)
+                else if (difficulty === 'medium') termCount = Math.floor(Math.random() * 2) + 2; // 2 or 3
+                else termCount = Math.floor(Math.random() * 2) + 3; // 3 or 4 for Hard
 
                 if (i === 0) {
                     // Line 0: Define E_0
