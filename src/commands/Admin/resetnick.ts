@@ -27,6 +27,8 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.guild) return;
 
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
     const subcommand = interaction.options.getSubcommand();
 
     if (subcommand === 'enable') {
@@ -51,29 +53,25 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
             }
         }
 
-        await interaction.reply({
-            content: `✅ **Enabled Auto-Nickname Reset** for <#${channel.id}>.\n🔄 Triggered immediate reset for ${resetCount} users.`,
-            flags: MessageFlags.Ephemeral
+        await interaction.editReply({
+            content: `✅ **Enabled Auto-Nickname Reset** for <#${channel.id}>.\n🔄 Triggered immediate reset for ${resetCount} users.`
         });
 
     } else if (subcommand === 'disable') {
         await ConfigManager.removeNicknameResetChannel(interaction.guild.id);
-        await interaction.reply({
-            content: '❌ **Disabled Auto-Nickname Reset**.',
-            flags: MessageFlags.Ephemeral
+        await interaction.editReply({
+            content: '❌ **Disabled Auto-Nickname Reset**.'
         });
 
     } else if (subcommand === 'status') {
         const channelId = await ConfigManager.getNicknameResetChannel(interaction.guild.id);
         if (channelId) {
-            await interaction.reply({
-                content: `✅ Active. Monitoring channel: <#${channelId}>`,
-                flags: MessageFlags.Ephemeral
+            await interaction.editReply({
+                content: `✅ Active. Monitoring channel: <#${channelId}>`
             });
         } else {
-            await interaction.reply({
-                content: '❌ Not currently monitoring any channel.',
-                flags: MessageFlags.Ephemeral
+            await interaction.editReply({
+                content: '❌ Not currently monitoring any channel.'
             });
         }
     }
