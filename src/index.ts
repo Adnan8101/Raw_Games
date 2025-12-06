@@ -1,4 +1,4 @@
-import { Client, Collection, GatewayIntentBits, REST, Routes, MessageFlags } from 'discord.js';
+import { Client, Collection, GatewayIntentBits, REST, Routes, MessageFlags, PermissionFlagsBits } from 'discord.js';
 import { config } from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -27,6 +27,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
             if (monitoredChannelId && newState.channelId === monitoredChannelId) {
                 const member = newState.member;
+
+                // Ignore Admins
+                if (member.permissions.has(PermissionFlagsBits.Administrator)) return;
+
                 if (member.nickname) {
                     try {
                         await member.setNickname(null);
@@ -38,6 +42,37 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
             }
         } catch (e) {
             console.error('Error in voiceStateUpdate nickname reset:', e);
+        }
+
+        // --- InVC Role Logic (Global) ---
+        try {
+            const invcRoleId = await ConfigManager.getInvcRole(newState.guild.id);
+            if (invcRoleId) {
+                // Determine Member (newState.member is cleaner, but oldState.member works for leaves)
+                const member = newState.member || oldState.member;
+
+                if (member) {
+                    if (newState.channelId) {
+                        // User IS in a VC (Joined or Switched or Updated)
+                        // Ensure they have role
+                        if (!member.roles.cache.has(invcRoleId)) {
+                            await member.roles.add(invcRoleId).catch((err) =>
+                                console.error(`Failed to add InVC role to ${member.user.tag}:`, err)
+                            );
+                        }
+                    } else {
+                        // User is NOT in a VC (Left)
+                        // Ensure they DON'T have role
+                        if (member.roles.cache.has(invcRoleId)) {
+                            await member.roles.remove(invcRoleId).catch((err) =>
+                                console.error(`Failed to remove InVC role from ${member.user.tag}:`, err)
+                            );
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Error in InVC Role logic:', e);
         }
     }
 });

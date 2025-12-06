@@ -53,4 +53,21 @@ export class ConfigManager {
     static async removeNicknameResetChannel(guildId: string) {
         await GuildConfig.updateOne({ guildId }, { $unset: { nicknameResetChannelId: "" } });
     }
+
+    static async setInvcRole(guildId: string, roleId: string) {
+        await GuildConfig.findOneAndUpdate(
+            { guildId },
+            { invcRoleId: roleId },
+            { upsert: true, new: true }
+        );
+    }
+
+    static async getInvcRole(guildId: string): Promise<string | null> {
+        const config = await GuildConfig.findOne({ guildId });
+        return config?.invcRoleId || null;
+    }
+
+    static async removeInvcRole(guildId: string) {
+        await GuildConfig.updateOne({ guildId }, { $unset: { invcRoleId: "" } });
+    }
 }

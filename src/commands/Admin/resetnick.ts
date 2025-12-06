@@ -44,6 +44,11 @@ export const execute = async (interaction: ChatInputCommandInteraction) => {
         for (const [_, vs] of voiceStates) {
             const member = vs.member;
             if (member && member.nickname) {
+                // Ignore Admins
+                if (member.permissions.has(PermissionFlagsBits.Administrator)) {
+                    continue;
+                }
+
                 try {
                     await member.setNickname(null);
                     resetCount++;
