@@ -34,10 +34,10 @@ export class SequenceCanvas {
 
         // 2. Main Text
         let fontSize = 70;
-        ctx.font = `bold ${fontSize}px sans - serif`;
+        ctx.font = `bold ${fontSize}px sans-serif`;
 
-        // Calculate total width with explicit spacing
-        const letterSpacing = 10;
+        // Calculate total width with dynamic spacing
+        let letterSpacing = fontSize * 0.15; // 15% of font size
         let totalWidth = 0;
         const chars = sequence.split('');
 
@@ -47,10 +47,16 @@ export class SequenceCanvas {
         if (chars.length > 0) totalWidth -= letterSpacing;
 
         // Auto-scale with safer margins
-        if (totalWidth > width - 120) {
-            const scale = (width - 120) / totalWidth;
+        // Use a much larger buffer (150px) to prevent any edge cutting
+        if (totalWidth > width - 150) {
+            const scale = (width - 150) / totalWidth;
             fontSize = Math.floor(fontSize * scale);
-            ctx.font = `bold ${fontSize}px sans - serif`;
+            // Limit minimum font size to prevent illegibility
+            if (fontSize < 12) fontSize = 12;
+
+            ctx.font = `bold ${fontSize}px sans-serif`;
+            // Scales spacing with font size
+            letterSpacing = fontSize * 0.15;
         }
 
         ctx.textAlign = 'center';
@@ -72,17 +78,17 @@ export class SequenceCanvas {
             ctx.save();
 
             // Minimal Jitter
-            const offsetX = (Math.random() - 0.5) * 2;
-            const offsetY = (Math.random() - 0.5) * 6;
+            const offsetX = (Math.random() - 0.5) * 5; // Slightly increased jitter for chaos but within bounds
+            const offsetY = (Math.random() - 0.5) * 10;
 
             ctx.translate(currentX + charWidth / 2 + offsetX, startY + offsetY);
 
             // Gentler Scale & Rotate
-            const scaleX = 0.95 + Math.random() * 0.1;
-            const scaleY = 0.95 + Math.random() * 0.1;
+            const scaleX = 0.9 + Math.random() * 0.2;
+            const scaleY = 0.9 + Math.random() * 0.2;
             ctx.scale(scaleX, scaleY);
 
-            const angle = (Math.random() - 0.5) * 0.2;
+            const angle = (Math.random() - 0.5) * 0.3;
             ctx.rotate(angle);
 
             // Max Contrast
