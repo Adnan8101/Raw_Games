@@ -7,7 +7,7 @@ interface MemoryGameState {
     isActive: boolean;
     startTime: number;
     emojiCount: number;
-    displayTime: number;
+    displayTime: number | null;
 }
 
 export class MemoryGameManager {
@@ -24,31 +24,31 @@ export class MemoryGameManager {
         return `https://twemoji.maxcdn.com/v/latest/72x72/${codePoint}.png`;
     }
 
-    public async startGame(interaction: ChatInputCommandInteraction, emojiCount: number, time: number): Promise<boolean> {
+    public async startGame(interaction: ChatInputCommandInteraction, emojiCount: number, time: number | null): Promise<boolean> {
         const channelId = interaction.channelId;
         if (this.activeGames.has(channelId)) {
             return false;
         }
 
-        
+
         const sequence: string[] = [];
         for (let i = 0; i < emojiCount; i++) {
             sequence.push(this.emojis[Math.floor(Math.random() * this.emojis.length)]);
         }
         const sequenceString = sequence.join('');
 
-        
+
         const canvas = createCanvas(800, 200);
         const ctx = canvas.getContext('2d');
 
-        
-        ctx.fillStyle = '#2b2d31'; 
+
+        ctx.fillStyle = '#2b2d31';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        
+
         const spacing = 100;
         const totalWidth = emojiCount * spacing;
-        const startX = (canvas.width - totalWidth) / 2 + (spacing / 2); 
+        const startX = (canvas.width - totalWidth) / 2 + (spacing / 2);
 
         const loadPromises = sequence.map(async (emoji, index) => {
             try {
@@ -66,10 +66,14 @@ export class MemoryGameManager {
 
         const attachment = new AttachmentBuilder(canvas.toBuffer(), { name: 'memory_sequence.png' });
 
+        const description = time
+            ? `**Memorize these emojis! You have ${time} seconds.**`
+            : `**Memorize these emojis!**`;
+
         const embed = new EmbedBuilder()
-            .setDescription(`**Memorize these emojis! You have ${time} seconds.**`)
+            .setDescription(description)
             .setImage('attachment://memory_sequence.png');
-        
+
 
         await interaction.reply({
             embeds: [embed],
@@ -79,7 +83,7 @@ export class MemoryGameManager {
         const gameState: MemoryGameState = {
             channelId,
             sequence: sequenceString,
-            isActive: true, 
+            isActive: true,
             startTime: Date.now(),
             emojiCount,
             displayTime: time
@@ -87,33 +91,28 @@ export class MemoryGameManager {
 
         this.activeGames.set(channelId, gameState);
 
-        
-        setTimeout(async () => {
-            try {
-                await interaction.deleteReply();
-                const channel = interaction.channel as TextChannel;
-                if (channel) {
-                    const embed = new EmbedBuilder()
-                        .setDescription('**Type the emojis in the exact order. No spaces, no extra characters.**');
 
-                    if (channel.isTextBased() && !(channel as any).isDMBased()) {
-                        await (channel as TextChannel).send({ embeds: [embed] });
-                    } else if ((channel as any).isDMBased()) {
-                        await (channel as any).send({ embeds: [embed] });
-                    }
+        if (time) {
+            setTimeout(async () => {
+                try {
+                    await interaction.deleteReply();
+                    const channel = interaction.channel as TextChannel;
+                    if (channel) {
+                        const embed = new EmbedBuilder()
+                            .setDescription('**Type the emojis in the exact order. No spaces, no extra characters.**');
 
-                    
-                    const game = this.activeGames.get(channelId);
-                    if (game) {
-                        game.isActive = true;
-                        
+                        if (channel.isTextBased() && !(channel as any).isDMBased()) {
+                            await (channel as TextChannel).send({ embeds: [embed] });
+                        } else if ((channel as any).isDMBased()) {
+                            await (channel as any).send({ embeds: [embed] });
+                        }
                     }
+                } catch (error) {
+                    console.error('Error in Memory Game timeout:', error);
+                    this.activeGames.delete(channelId);
                 }
-            } catch (error) {
-                console.error('Error in Memory Game timeout:', error);
-                this.activeGames.delete(channelId);
-            }
-        }, time * 1000);
+            }, time * 1000);
+        }
 
         return true;
     }
@@ -150,7 +149,7 @@ export class MemoryGameManager {
 
         const content = message.content.trim();
 
-        
+
         const normalize = (str: string) => str.replace(/[\uFE0F\s]/g, '');
 
         const normalizedContent = normalize(content);
@@ -158,15 +157,15 @@ export class MemoryGameManager {
 
         console.log(`[Memory Game] Expected: ${normalizedSequence} (${game.sequence}), Received: ${normalizedContent} (${content})`);
 
-        
+
         if (normalizedContent === normalizedSequence) {
-            
+
             game.isActive = false;
             this.activeGames.delete(message.channelId);
 
             await message.react('✅');
 
-            const timeTaken = ((Date.now() - game.startTime) / 1000) - game.displayTime; // Approximate time taken to type
+            const timeTaken = (Date.now() - game.startTime) / 1000;
 
             const embed = new EmbedBuilder()
                 .setTitle('Winner')

@@ -62,7 +62,7 @@ export const handleMemoryCommand = async (interaction: ChatInputCommandInteracti
 
         if (subcommand === 'start') {
             const emojiCount = options.getInteger('emoji_count') || 5;
-            const time = options.getInteger('time') || 4;
+            const time = options.getInteger('time');
 
             const manager = getMemoryGameManager(interaction.client);
             const success = await manager.startGame(interaction, emojiCount, time);

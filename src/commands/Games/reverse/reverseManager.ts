@@ -122,11 +122,15 @@ export class ReverseGameManager {
         const reversed = text.split('').reverse().join('');
 
 
-        const attachment = await ReverseCanvas.generateImage(text);
+        const guildName = interaction.guild?.name || 'Raw Games';
+        const guildIconUrl = interaction.guild?.iconURL({ extension: 'png' }) || null;
+
+        // DECIPHER MODE: Image shows REVERSED text, Answer is ORIGINAL text
+        const attachment = await ReverseCanvas.generateImage(reversed, guildName, guildIconUrl);
 
         const embed = new EmbedBuilder()
             .setTitle('Reverse the Word')
-            .setDescription(`**Reverse the word. You have ${time > 0 ? time + 's' : 'unlimited time'} to view.**\n\n**Type the word reversed. First exact match wins.**`)
+            .setDescription(`**Decipher the reversed word. You have ${time > 0 ? time + 's' : 'unlimited time'} to view.**\n\n**Type the original word. First exact match wins.**`) // Updated instruction
             .setImage('attachment://reverse_challenge.png')
             .setColor('#0099ff');
 
@@ -137,7 +141,7 @@ export class ReverseGameManager {
 
 
         try {
-            await interaction.user.send(`Your answer: || ${reversed} ||`);
+            await interaction.user.send(`Your answer: || ${text} ||`); // Send ORIGINAL text as answer
         } catch (e) {
             await interaction.followUp({ content: 'Couldn’t DM answer — enable DMs.', flags: MessageFlags.Ephemeral });
         }
@@ -145,7 +149,7 @@ export class ReverseGameManager {
         const gameState: ReverseGameState = {
             channelId,
             originalText: text,
-            reversedText: reversed,
+            reversedText: reversed, // Store ACTUAL reversed text
             isActive: true,
             startTime: Date.now(),
             difficulty,
@@ -165,7 +169,7 @@ export class ReverseGameManager {
                     if (interaction.channel) {
                         const timeUpEmbed = new EmbedBuilder()
                             .setTitle('Time Up!')
-                            .setDescription(`The time is up! The correct answer was: **${reversed}**`)
+                            .setDescription(`The time is up! The correct answer was: **${text}**`)
                             .setColor('#ff0000');
 
                         if (interaction.channel.isTextBased() && !(interaction.channel as any).isDMBased()) {
@@ -197,7 +201,7 @@ export class ReverseGameManager {
             return false;
         }
 
-        const answer = game.reversedText;
+        const answer = game.originalText; // Answer is ORIGINAL text
         this.activeGames.delete(channelId);
 
         const embed = new EmbedBuilder()
@@ -222,7 +226,7 @@ export class ReverseGameManager {
         const content = message.content.trim();
 
 
-        if (content.toLowerCase() === game.reversedText.toLowerCase()) {
+        if (content.toLowerCase() === game.originalText.toLowerCase()) { // Check against ORIGINAL text
             game.isActive = false;
             this.activeGames.delete(message.channelId);
 
@@ -234,8 +238,8 @@ export class ReverseGameManager {
                 .setTitle('Sentence Reverse — Winner!')
                 .addFields(
                     { name: 'Winner', value: `<@${message.author.id}>`, inline: true },
-                    { name: 'Original', value: game.originalText, inline: true },
-                    { name: 'Reversed', value: game.reversedText, inline: true },
+                    { name: 'Original (Answer)', value: game.originalText, inline: true },
+                    { name: 'Image Text', value: game.reversedText, inline: true },
                     { name: 'Difficulty', value: game.difficulty, inline: true },
                     { name: 'Time taken', value: `${timeTaken.toFixed(2)}s`, inline: false }
                 )

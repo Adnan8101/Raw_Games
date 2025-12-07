@@ -50,11 +50,11 @@ export class VowelsGameManager {
         let useMixed = false;
 
         if (difficulty === 'Easy') {
-            length = Math.floor(Math.random() * 7) + 9; 
+            length = Math.floor(Math.random() * 7) + 9;
         } else if (difficulty === 'Medium') {
-            length = Math.floor(Math.random() * 6) + 15; 
-        } else { 
-            length = Math.floor(Math.random() * 6) + 20; 
+            length = Math.floor(Math.random() * 6) + 15;
+        } else {
+            length = Math.floor(Math.random() * 6) + 20;
         }
 
         if (category === 'words') useWords = true;
@@ -68,28 +68,28 @@ export class VowelsGameManager {
                 if (result.length + word.length <= length) {
                     result += word;
                 } else {
-                    
+
                     break;
                 }
             }
-            
+
             while (result.length < length) {
                 result += allChars[Math.floor(Math.random() * allChars.length)];
             }
         } else {
-            
+
             for (let i = 0; i < length; i++) {
                 if (useMixed && Math.random() < 0.1) {
-                    
+
                     const punct = '.,!?;:';
                     result += punct[Math.floor(Math.random() * punct.length)];
                 } else {
                     if (difficulty === 'Easy') {
-                        
-                        
+
+
                         result += allChars[Math.floor(Math.random() * allChars.length)];
                     } else if (difficulty === 'Hard') {
-                        
+
                         if (Math.random() < 0.2) {
                             const tricky = ['l', '1', 'I', '0', 'O'];
                             result += tricky[Math.floor(Math.random() * tricky.length)];
@@ -103,7 +103,7 @@ export class VowelsGameManager {
             }
         }
 
-        
+
         return result.substring(0, length);
     }
 
@@ -116,12 +116,14 @@ export class VowelsGameManager {
         const text = this.generateText(difficulty, category);
         const { count: vowelCount, breakdown } = this.countVowels(text);
 
-        
-        const attachment = await VowelsCanvas.generateImage(text);
+
+        const guildName = interaction.guild?.name || 'Raw Games';
+        const guildIconUrl = interaction.guild?.iconURL({ extension: 'png' }) || null;
+        const attachment = await VowelsCanvas.generateImage(text, guildName, guildIconUrl);
 
         const embed = new EmbedBuilder()
-            .setTitle('Count the Vowels')
-            .setDescription(`**Count all the vowels (A, E, I, O, U) in the text below. You have ${time > 0 ? time + 's' : 'unlimited time'} to view.**\n\n**Type only the number of vowels. First correct answer wins.**`)
+            .setTitle('Vowels Removed')
+            .setDescription(`**Guess the original word/sentence! You have ${time > 0 ? time + 's' : 'unlimited time'} to view.**\n\n**Type the original text. First exact match wins.**`)
             .setImage('attachment://vowels_challenge.png')
             .setColor('#0099ff');
 
@@ -130,7 +132,7 @@ export class VowelsGameManager {
             files: [attachment]
         });
 
-        
+
         try {
             await interaction.user.send(`Your answer: || ${vowelCount} ||`);
         } catch (e) {
@@ -155,13 +157,13 @@ export class VowelsGameManager {
         if (time > 0) {
             setTimeout(async () => {
                 try {
-                    
+
                     if (!this.activeGames.has(channelId)) return;
 
                     await interaction.deleteReply();
                 } catch (error) {
                     console.error('Error in Vowels Game timeout:', error);
-                    
+
                 }
             }, time * 1000);
         }
@@ -177,7 +179,7 @@ export class VowelsGameManager {
             return false;
         }
 
-        
+
         if (!interaction.memberPermissions?.has('ManageGuild') && interaction.user.id !== game.starterId) {
             return false;
         }
@@ -192,7 +194,7 @@ export class VowelsGameManager {
 
         const channel = interaction.channel;
         if (channel) {
-            
+
             if (channel.isTextBased() && !(channel as any).isDMBased()) {
                 await (channel as TextChannel).send({ embeds: [embed] });
             }
@@ -207,10 +209,10 @@ export class VowelsGameManager {
 
         const content = message.content.trim();
 
-        
-        
+
+
         if (!/^[1-9]\d*|0$/.test(content)) {
-            
+
             return;
         }
 
