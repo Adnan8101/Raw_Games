@@ -46,9 +46,9 @@ export class SequenceCanvas {
         }
         if (chars.length > 0) totalWidth -= letterSpacing;
 
-        // Auto-scale
-        if (totalWidth > width - 80) {
-            const scale = (width - 80) / totalWidth;
+        // Auto-scale with safer margins
+        if (totalWidth > width - 120) {
+            const scale = (width - 120) / totalWidth;
             fontSize = Math.floor(fontSize * scale);
             ctx.font = `bold ${fontSize}px sans - serif`;
         }

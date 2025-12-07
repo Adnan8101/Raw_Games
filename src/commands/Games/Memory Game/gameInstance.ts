@@ -38,13 +38,54 @@ export class MemoryGameManager {
         const sequenceString = sequence.join('');
 
 
-        const canvas = createCanvas(800, 200);
+        const guildName = interaction.guild?.name || 'Raw Games';
+        const guildIconUrl = interaction.guild?.iconURL({ extension: 'png' }) || null;
+
+        const canvas = createCanvas(800, 300);
         const ctx = canvas.getContext('2d');
 
 
         ctx.fillStyle = '#2b2d31';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Branding
+        try {
+            const padding = 20;
+            const iconSize = 40;
+            const fontSize = 24;
+
+            // TOP LEFT: [Raw Icon] [Raw Studio]
+            const rawIconUrl = 'https://cdn.discordapp.com/icons/1114156524311412857/f1fbaaa11d8f29a8b1191bc50fa6f394.png';
+            const rawIcon = await loadImage(rawIconUrl);
+            ctx.drawImage(rawIcon, padding, padding, iconSize, iconSize);
+
+            ctx.font = `bold ${fontSize}px sans-serif`;
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 2;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.fillText('Raw Studio', padding + iconSize + 10, padding + iconSize / 2);
+
+            // TOP RIGHT: [Guild Name] [Guild Icon]
+            let rightOffset = padding;
+
+            if (guildIconUrl) {
+                try {
+                    const guildIcon = await loadImage(guildIconUrl);
+                    ctx.drawImage(guildIcon, canvas.width - padding - iconSize, padding, iconSize, iconSize);
+                    rightOffset += iconSize + 10;
+                } catch (e) {
+                    console.error('Failed to load guild icon', e);
+                }
+            }
+
+            ctx.textAlign = 'right';
+            ctx.fillText(guildName, canvas.width - rightOffset, padding + iconSize / 2);
+
+        } catch (error) {
+            console.error('Failed to render watermarks:', error);
+        }
 
         const spacing = 100;
         const totalWidth = emojiCount * spacing;

@@ -71,8 +71,8 @@ export class ReverseCanvas {
             if (currentLineWidth > maxLineWidth) maxLineWidth = currentLineWidth;
         });
 
-        if (maxLineWidth > width - 80) {
-            const scale = (width - 80) / maxLineWidth;
+        if (maxLineWidth > width - 120) {
+            const scale = (width - 120) / maxLineWidth;
             fontSize = Math.floor(fontSize * scale);
             ctx.font = `bold ${fontSize}px sans - serif`; // Update font for rendering
         }
